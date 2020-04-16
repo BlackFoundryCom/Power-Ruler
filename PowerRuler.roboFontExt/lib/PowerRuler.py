@@ -45,6 +45,7 @@ class TriggerButton():
         self.mousePt = None
         self.activDraw = 0
         self.keydidUp = 0
+        self.getGlyph()
         addObserver(self, "drawClosest", "draw")
         addObserver(self, "drawClosest", "drawPreview")
         addObserver(self, "mouseMoved", "mouseMoved")
@@ -59,23 +60,25 @@ class TriggerButton():
                 return obsClass
         return None
 
-    @property
-    def g(self):
+    def getGlyph(self):
         currentGlyph = CurrentGlyph()
         if currentGlyph is None:
-            return None
+            self.g = None
+            return 
         _glyph = currentGlyph.copy()
         RCJKI = self.getRCJKI()
         if RCJKI is None: 
-            return _glyph
+            self.g = _glyph
+            return 
         RCJKI_glyph = RCJKI.currentFont[_glyph.name]
         RCJKI_glyph.computeDeepComponents()
         for i, atomicInstanceGlyph in RCJKI_glyph.atomicInstancesGlyphs:
             for c in atomicInstanceGlyph:
                 _glyph.appendContour(c)
-        return _glyph
+        self.g = _glyph
 
     def keyDown(self, sender):
+        self.getGlyph()
         if self.g is None: return
         if sender['event'].keyCode() == 15:
             self.activDraw = 1
@@ -92,17 +95,16 @@ class TriggerButton():
         if not self.mousePt: return
         self.closest = self.ortho =  None
         self.sections = []
-        g = self.g
-        if not g: return
-        self.pen = ClosestPointPen(self.mousePt, g.getParent())
-        g.draw(self.pen)
+        self.getGlyph()
+        if not self.g: return
+        self.pen = ClosestPointPen(self.mousePt, self.g.getParent())
+        self.g.draw(self.pen)
         self.closest, self.ortho = self.pen.getClosestData()
         UpdateCurrentGlyphView()
         
     def drawClosest(self, info):
         if not self.activDraw: return
         if self.closest and self.ortho:
-            g = self.g
             p = self.closest[0], self.closest[1]
             s = info['scale']
             r = 2.5*s
@@ -139,7 +141,7 @@ class TriggerButton():
             oval(p[0]-rOutline2, p[1]-rOutline2, 2*rOutline2, 2*rOutline2)
             restore()
             
-            self.sections = IntersectGlyphWithLine(g, (endOut, endIn), canHaveComponent=True, addSideBearings=False)
+            self.sections = IntersectGlyphWithLine(self.g, (endOut, endIn), canHaveComponent=True, addSideBearings=False)
             self.sections.sort()
             
             save()
@@ -152,7 +154,7 @@ class TriggerButton():
                     fontsize = 9*s#*(max(1, min(1.5, 100/dist)))
                     midPt = (cur[0]+next[0])*.5, (cur[1]+next[1])*.5 
 
-                    if g.pointInside(midPt):
+                    if self.g.pointInside(midPt):
                         fillText = 0
                         fillDisc = 1              
                     else:
@@ -184,9 +186,8 @@ class TriggerButton():
         if not self.activDraw: return
         if self.keydidUp == 1: return
         self.mousePt = (info['point'].x, info['point'].y)
-        g = self.g
-        self.pen = ClosestPointPen(self.mousePt, g.getParent())
-        g.draw(self.pen)
+        self.pen = ClosestPointPen(self.mousePt, self.g.getParent())
+        self.g.draw(self.pen)
         self.closest, self.ortho = self.pen.getClosestData()
         UpdateCurrentGlyphView()
         
