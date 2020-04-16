@@ -80,10 +80,10 @@ class TriggerButton():
     def keyDown(self, sender):
         self.getGlyph()
         if self.g is None: return
-        if sender['event'].keyCode() == 15:
+        if sender['event'].characters() == "r":
             self.activDraw = 1
             self.keydidUp = 0
-        if sender['event'].keyCode() == 15 and getActiveEventTool().getModifiers()['commandDown']:
+        if sender['event'].characters() == "r" and getActiveEventTool().getModifiers()['commandDown']:
             self.activDraw = 0
         UpdateCurrentGlyphView()
 
