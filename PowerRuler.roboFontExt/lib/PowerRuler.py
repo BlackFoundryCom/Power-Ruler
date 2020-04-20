@@ -71,6 +71,9 @@ class TriggerButton():
             self.g = _glyph
             return 
         RCJKI_glyph = RCJKI.currentFont[_glyph.name]
+        if RCJKI_glyph.type == "atomicElement":
+            self.g = _glyph
+            return 
         RCJKI_glyph.computeDeepComponents()
         for i, atomicInstanceGlyph in RCJKI_glyph.atomicInstancesGlyphs:
             for c in atomicInstanceGlyph:
