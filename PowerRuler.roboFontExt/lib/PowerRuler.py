@@ -45,7 +45,7 @@ class TriggerButton():
         self.mousePt = None
         self.activDraw = 0
         self.keydidUp = 0
-        self.getGlyph()
+        # self.getGlyph()
         addObserver(self, "drawClosest", "draw")
         addObserver(self, "drawClosest", "drawPreview")
         addObserver(self, "mouseMoved", "mouseMoved")
@@ -60,28 +60,32 @@ class TriggerButton():
                 return obsClass
         return None
 
-    def getGlyph(self):
+    @property
+    def g(self):
         currentGlyph = CurrentGlyph()
         if currentGlyph is None:
-            self.g = None
-            return 
+            # self.g = None
+            return None
         _glyph = currentGlyph.copy()
         RCJKI = self.getRCJKI()
         if RCJKI is None: 
-            self.g = _glyph
-            return 
+            # self.g = _glyph
+            return _glyph
         RCJKI_glyph = RCJKI.currentFont[_glyph.name]
         if RCJKI_glyph.type == "atomicElement":
-            self.g = _glyph
-            return 
-        RCJKI_glyph.computeDeepComponents()
-        for i, atomicInstanceGlyph in RCJKI_glyph.atomicInstancesGlyphs:
-            for c in atomicInstanceGlyph:
-                _glyph.appendContour(c)
-        self.g = _glyph
+            # self.g = _glyph
+            return _glyph
+        # RCJKI_glyph.preview.computeDeepComponents()
+        # if RCJKI_glyph.preview.axisPreview is not None:
+        for i, atomicInstanceGlyph in enumerate(RCJKI_glyph.preview.axisPreview):
+            # if atomicInstanceGlyph.transformedGlyph is not None:
+                for c in atomicInstanceGlyph.transformedGlyph:
+                    _glyph.appendContour(c)
+        # self.g = _glyph
+        return _glyph
 
     def keyDown(self, sender):
-        self.getGlyph()
+        # self.getGlyph()
         if self.g is None: return
         if sender['event'].characters() == "r":
             self.activDraw = 1
@@ -98,7 +102,7 @@ class TriggerButton():
         if not self.mousePt: return
         self.closest = self.ortho =  None
         self.sections = []
-        self.getGlyph()
+        # self.getGlyph()
         if not self.g: return
         self.pen = ClosestPointPen(self.mousePt, self.g.getParent())
         self.g.draw(self.pen)
