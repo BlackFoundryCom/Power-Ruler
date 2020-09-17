@@ -48,6 +48,7 @@ class TriggerButton():
         # self.getGlyph()
         addObserver(self, "drawClosest", "draw")
         addObserver(self, "drawClosest", "drawPreview")
+        addObserver(self, "drawClosest", "drawInactive")
         addObserver(self, "mouseMoved", "mouseMoved")
         addObserver(self, "changeGlyph", "currentGlyphChanged")
         addObserver(self, "keyDown", "keyDown")
