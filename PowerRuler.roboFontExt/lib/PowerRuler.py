@@ -65,24 +65,17 @@ class TriggerButton():
     def g(self):
         currentGlyph = CurrentGlyph()
         if currentGlyph is None:
-            # self.g = None
             return None
         _glyph = currentGlyph.copy()
+        pen = _glyph.getPen()
         RCJKI = self.getRCJKI()
         if RCJKI is None: 
-            # self.g = _glyph
             return _glyph
         RCJKI_glyph = RCJKI.currentFont[_glyph.name]
         if RCJKI_glyph.type == "atomicElement":
-            # self.g = _glyph
             return _glyph
-        # RCJKI_glyph.preview.computeDeepComponents()
-        # if RCJKI_glyph.preview.axisPreview is not None:
-        for i, atomicInstanceGlyph in enumerate(RCJKI_glyph.preview.axisPreview):
-            # if atomicInstanceGlyph.transformedGlyph is not None:
-                for c in atomicInstanceGlyph.transformedGlyph:
-                    _glyph.appendContour(c)
-        # self.g = _glyph
+        for atomicInstanceGlyph in RCJKI_glyph.preview():
+            atomicInstanceGlyph.glyph.draw(pen)
         return _glyph
 
     def keyDown(self, sender):
