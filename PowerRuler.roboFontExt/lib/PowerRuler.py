@@ -74,6 +74,8 @@ class TriggerButton():
         RCJKI_glyph = RCJKI.currentFont[_glyph.name]
         if RCJKI_glyph.type == "atomicElement":
             return _glyph
+        if len(RCJKI_glyph._RGlyph):
+            return _glyph
         for atomicInstanceGlyph in RCJKI_glyph.preview():
             atomicInstanceGlyph.glyph.draw(pen)
         return _glyph
