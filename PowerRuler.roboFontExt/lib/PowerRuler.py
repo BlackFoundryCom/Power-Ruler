@@ -34,6 +34,22 @@ import os
 
 import lib.eventTools
 
+def wrap_design_frame(func):
+    def wrapper(self, *args, **kwargs):
+        print("in wrapper")
+        glyph = func(self, *args, **kwargs)
+        designFrameController = self.getCJKDesignFrame()
+        if designFrameController is None:
+            return glyph
+        pen = glyph.getPen()
+        if hasattr(designFrameController, "main_frame_glyph"):
+            designFrameController.main_frame_glyph.draw(pen)
+        if hasattr(designFrameController, "frame_glyph"):
+            designFrameController.frame_glyph.draw(pen)
+        return glyph
+    return wrapper
+
+
 class TriggerButton():
         
     def __init__(self):
@@ -61,7 +77,15 @@ class TriggerButton():
                 return obsClass
         return None
 
+    def getCJKDesignFrame(self):
+        for o in lib.eventTools.eventManager.allObservers():
+            obsClass = o[1]
+            if obsClass.__class__.__name__ == 'DesignFrameController':
+                return obsClass
+        return None
+
     @property
+    @wrap_design_frame
     def g(self):
         currentGlyph = CurrentGlyph()
         if currentGlyph is None:
