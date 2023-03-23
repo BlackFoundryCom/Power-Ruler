@@ -36,7 +36,6 @@ import lib.eventTools
 
 def wrap_design_frame(func):
     def wrapper(self, *args, **kwargs):
-        print("in wrapper")
         glyph = func(self, *args, **kwargs)
         designFrameController = self.getCJKDesignFrame()
         if designFrameController is None:
