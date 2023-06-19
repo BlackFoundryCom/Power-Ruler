@@ -37,14 +37,19 @@ import lib.eventTools
 def wrap_design_frame(func):
     def wrapper(self, *args, **kwargs):
         glyph = func(self, *args, **kwargs)
+        rGlyph = RGlyph()
         designFrameController = self.getCJKDesignFrame()
         if designFrameController is None:
             return glyph
         pen = glyph.getPen()
+        rpen = rGlyph.getPen()
         if hasattr(designFrameController, "main_frame_glyph"):
-            designFrameController.main_frame_glyph.draw(pen)
+            designFrameController.main_frame_glyph.draw(rpen)
         if hasattr(designFrameController, "frame_glyph"):
-            designFrameController.frame_glyph.draw(pen)
+            designFrameController.frame_glyph.draw(rpen)
+        offset = designFrameController.designFrame.shift
+        rGlyph.moveBy(offset)
+        rGlyph.draw(pen)
         return glyph
     return wrapper
 
